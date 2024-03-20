@@ -1,0 +1,107 @@
+﻿@model List<ListItem>
+<div id="alert-container"></div> 
+<h1>Hello , @ViewData["username"]</h1>
+
+<a href="/ListItem/CreateItemView">Create New</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Id</th>
+            <th scope="col">Title</th>
+            <th scope="col">Descreption</th>
+            <th scope="col">DeadLine</th>
+            <th scope="col">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+ @for(int i=0;i<Model.Count;i++)
+{
+            <tr>
+                <th scope="row">@(i+1)</th>
+
+                <td>@Model[i].Id</td>
+                <td>@Model[i].Title</td>
+                <td>@Model[i].Descreption</td>
+                <td>@Model[i].Deadline</td>
+                <td><a href="/ListItem/EditView?Id=@Model[i].Id">Edit</a> || <a href="#" class="delete-item" data-id="@Model[i].Id">Delete</a></td>
+            </tr>
+}
+</tbody>
+</table>
+
+@* Modal *@
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="close"  id="close-modal-1" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete item ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="close-modal-2" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <a href="#" class="btn btn-danger confirm-delete" id="Delete" data-dismiss="modal">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+
+ 
+        // Select all elements with the class containing "delete" (assuming your class name includes "delete")
+        const deleteLinks = document.querySelectorAll('.delete-item');
+
+    deleteLinks.forEach(link => {
+        link.addEventListener('click', function (event) {
+            event.preventDefault(); // Prevent default navigation
+
+            // Get item ID from the data-id attribute
+            const itemId = this.dataset.id;
+
+            // Logic to show the modal with the captured ID
+            console.log(itemId);
+            console.log(itemId)
+            $("#itemId").val(itemId);
+            $("#deleteModal").data("itemId", itemId); // Set ID as data attribute on modal button
+            $("#deleteModal").modal("show");      //     Show the modal
+
+            document.getElementById("Delete").href = "/ListItem/Delete?Id=" + itemId;
+
+        });
+    });
+
+    // Close modal using close buttons
+    const closeButtons = document.querySelectorAll('.close, .btn-secondary'); // Select both close buttons
+
+    closeButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const deleteModal = document.getElementById('deleteModal');
+            deleteModal.classList.remove('show'); // Hide the modal using Bootstrap class
+        });
+    });
+
+    // ===
+    
+        document.addEventListener("DOMContentLoaded", function () { // Wait for DOM to load
+            const alertContainer = document.getElementById('alert-container'); // Get the container element
+            const newAlert = document.createElement('div'); // Create a new div for the alert
+            newAlert.className = "alert alert-success"; // Set alert classes
+            newAlert.role = "alert"; // Set role attribute
+            newAlert.textContent = 'Created @ViewData["Title"] successfully'; // Set content
+
+                alertContainer.appendChild(newAlert); // Append the alert to the container 
+            
+            setTimeout(function () {
+                alertContainer.removeChild(newAlert); // Remove the alert after 4 seconds
+            }, 5000); // Delay in milliseconds (4 seconds total duration)
+        });
+</script>
